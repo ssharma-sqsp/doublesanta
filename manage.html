@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Data - Double Santa</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1>⚙️ Manage Double Santa</h1>
+                <p class="subtitle">Reset or Export Data</p>
+            </div>
+
+            <div class="warning-box">
+                <p><strong>⚠️ Organizer Only!</strong> This page is for managing your Double Santa setup. Don't share this URL with participants.</p>
+            </div>
+
+            <div id="statusSection">
+                <h3>Current Status</h3>
+                <div id="statusDisplay"></div>
+            </div>
+
+            <hr style="margin: 30px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+            <div class="form-group">
+                <h3>📥 Export Data</h3>
+                <p class="help-text">Download your Double Santa data for backup or GitHub Pages deployment</p>
+                <div class="button-group">
+                    <button onclick="exportDataFile()" id="exportBtn" class="btn-primary" disabled>Download data.json</button>
+                    <button onclick="exportCodes()" id="exportCodesBtn" class="btn-secondary" disabled>Download Codes</button>
+                </div>
+            </div>
+
+            <hr style="margin: 30px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+            <div class="form-group">
+                <h3>📁 Import Existing data.json</h3>
+                <p class="help-text">Load a previously generated data.json file (useful when switching browsers)</p>
+                <div style="display: flex; gap: 10px; align-items: stretch; margin-top: 15px;">
+                    <label for="fileInput" class="btn-secondary" style="flex: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0;">
+                        📂 Choose File
+                    </label>
+                    <button onclick="importDataFile()" class="btn-primary" style="flex: 1;">📥 Import File</button>
+                </div>
+                <input type="file" id="fileInput" accept=".json" style="display: none;">
+                <p id="fileName" style="margin-top: 10px; font-size: 0.9rem; color: #718096; font-style: italic;"></p>
+            </div>
+
+            <hr style="margin: 30px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+            <div class="form-group">
+                <h3>🔄 Reset Setup</h3>
+                <p class="help-text">Clear current setup to create a new Double Santa exchange</p>
+                <div class="warning-box">
+                    <p><strong>Warning:</strong> This will delete all current pairings and codes. Only do this if:</p>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li>You're testing the app</li>
+                        <li>You want to create a new event</li>
+                        <li>You made a mistake and need to start over</li>
+                    </ul>
+                </div>
+                <button onclick="resetSetup()" class="btn-primary" style="background: var(--error);">🗑️ Reset Everything</button>
+            </div>
+
+            <div class="button-group" style="margin-top: 40px;">
+                <a href="setup.html" class="btn-secondary">Go to Setup</a>
+                <a href="index.html" class="btn-secondary">Go to Reveal</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            checkStatus();
+            
+            // Show selected filename
+            document.getElementById('fileInput').addEventListener('change', function(e) {
+                const fileName = e.target.files[0]?.name || '';
+                const fileNameDisplay = document.getElementById('fileName');
+                if (fileName) {
+                    fileNameDisplay.textContent = `Selected: ${fileName}`;
+                    fileNameDisplay.style.color = '#48bb78';
+                } else {
+                    fileNameDisplay.textContent = '';
+                }
+            });
+        });
+
+        function checkStatus() {
+            const data = localStorage.getItem('secretSantaData');
+            const setup = localStorage.getItem('secretSantaSetup');
+            const statusDiv = document.getElementById('statusDisplay');
+            
+            if (setup && data) {
+                const decrypted = decryptData(data);
+                const participantCount = Object.keys(decrypted).length;
+                const duoCount = participantCount / 2;
+                
+                statusDiv.innerHTML = `
+                    <div class="success-box">
+                        <p><strong>✅ Double Santa is Active</strong></p>
+                        <p>Participants: <strong>${participantCount}</strong></p>
+                        <p>Duos: <strong>${duoCount}</strong></p>
+                        <p>Status: Ready for reveal</p>
+                    </div>
+                `;
+                
+                document.getElementById('exportBtn').disabled = false;
+                document.getElementById('exportCodesBtn').disabled = false;
+            } else {
+                statusDiv.innerHTML = `
+                    <div class="info-box">
+                        <p><strong>No Active Double Santa</strong></p>
+                        <p>No setup has been created yet.</p>
+                        <div class="button-group" style="margin-top: 15px;">
+                            <a href="setup.html" class="btn-primary">🎅 Create New Double Santa</a>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function exportDataFile() {
+            const data = localStorage.getItem('secretSantaData');
+            if (!data) {
+                alert('❌ No data to export');
+                return;
+            }
+
+            const dataObj = { data: data, version: 1 };
+            const json = JSON.stringify(dataObj, null, 2);
+            
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert('✅ data.json downloaded! Save this in your project folder for GitHub Pages deployment.');
+        }
+
+        function exportCodes() {
+            const data = localStorage.getItem('secretSantaData');
+            if (!data) {
+                alert('❌ No data to export');
+                return;
+            }
+
+            const decrypted = decryptData(data);
+            let text = '🎅 Double Santa - Secret Codes 🎁\n\n';
+            text += '⚠️ KEEP THESE CODES PRIVATE ⚠️\n';
+            text += 'Give each person their own code only!\n\n';
+            text += '=' .repeat(50) + '\n\n';
+            
+            // Randomize the order of codes for security
+            const entries = Object.entries(decrypted);
+            shuffleArray(entries);
+            
+            entries.forEach(([code, info]) => {
+                text += `${info.name}\n`;
+                text += `Secret Code: ${code}\n`;
+                text += '-'.repeat(30) + '\n\n';
+            });
+            
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'secret-santa-codes.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert('✅ Codes downloaded!');
+        }
+
+        function importDataFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('❌ Please select a file first');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const json = JSON.parse(e.target.result);
+                    
+                    if (!json.data) {
+                        alert('❌ Invalid data.json file format');
+                        return;
+                    }
+
+                    // Verify it's valid encrypted data
+                    const decrypted = decryptData(json.data);
+                    
+                    // Store in localStorage
+                    localStorage.setItem('secretSantaData', json.data);
+                    localStorage.setItem('secretSantaSetup', 'true');
+                    
+                    alert('✅ Data imported successfully! The Double Santa is now active.');
+                    checkStatus();
+                    
+                } catch (error) {
+                    alert('❌ Failed to import file. Make sure it\'s a valid data.json file.');
+                    console.error(error);
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+
+        function resetSetup() {
+            const confirmed = confirm('⚠️ Are you sure you want to reset?\n\nThis will DELETE:\n- All current pairings\n- All secret codes\n- All participant data\n\nThis cannot be undone!');
+            
+            if (!confirmed) return;
+            
+            const doubleCheck = confirm('🚨 FINAL WARNING 🚨\n\nAre you ABSOLUTELY sure?\n\nIf you\'ve already shared codes with participants, they will no longer work!');
+            
+            if (!doubleCheck) return;
+            
+            localStorage.removeItem('secretSantaData');
+            localStorage.removeItem('secretSantaSetup');
+            
+            alert('✅ Setup has been reset. You can now create a new Double Santa exchange.');
+            checkStatus();
+            
+            // Optionally redirect to setup
+            if (confirm('Go to setup page to create a new exchange?')) {
+                window.location.href = 'setup.html';
+            }
+        }
+
+        function shuffleArray(array) {
+            // Fisher-Yates shuffle algorithm
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function decryptData(encrypted) {
+            try {
+                const decoded = atob(encrypted);
+                const key = 'SECRETSANTA2024';
+                let decrypted = '';
+                
+                for (let i = 0; i < decoded.length; i++) {
+                    decrypted += String.fromCharCode(
+                        decoded.charCodeAt(i) ^ key.charCodeAt(i % key.length)
+                    );
+                }
+                
+                return JSON.parse(decrypted);
+            } catch (error) {
+                throw new Error('Failed to decrypt data');
+            }
+        }
+    </script>
+</body>
+</html>
+

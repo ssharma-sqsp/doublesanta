@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Double Santa - Reveal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card reveal-card">
+            <div class="header">
+                <h1>🎁 Double Santa</h1>
+                <p class="subtitle">Reveal Your Assignment</p>
+            </div>
+
+            <div id="loginForm">
+                <div class="form-group">
+                    <label for="nameInput">Your Name</label>
+                    <input type="text" id="nameInput" placeholder="Enter your name">
+                </div>
+
+                <div class="form-group">
+                    <label for="codeInput">Secret Code</label>
+                    <input type="text" id="codeInput" placeholder="Enter your secret code">
+                </div>
+
+                <div class="button-group">
+                    <button onclick="revealAssignment()" class="btn-primary">🎅 Reveal My Assignment</button>
+                </div>
+
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+            </div>
+
+            <div id="assignmentSection" style="display: none;">
+                <div class="assignment-box">
+                    <h2>🎉 Your Double Santa Assignment</h2>
+                    
+                    <div class="duo-info">
+                        <h3>Your Duo Partner:</h3>
+                        <p class="duo-name" id="duoPartner"></p>
+                    </div>
+
+                    <div class="target-info">
+                        <h3>🎁 You're buying gifts for:</h3>
+                        <div class="target-duo" id="targetDuo">
+                            <!-- Target duo names will appear here -->
+                        </div>
+                    </div>
+
+                    <div class="reminder-box">
+                        <p>💡 <strong>Remember:</strong> Keep this secret! Don't tell anyone who you're buying for.</p>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button onclick="logout()" class="btn-secondary">🔒 Hide Assignment</button>
+                </div>
+            </div>
+
+            <div id="notSetupYet" style="display: none;">
+                <div class="info-box">
+                    <h3>🎅 Double Santa Not Set Up Yet</h3>
+                    <p>The organizer hasn't created the pairings yet. Please check back later!</p>
+                </div>
+                <div class="button-group">
+                    <p style="margin-bottom: 15px;">Are you the organizer?</p>
+                    <a href="setup.html" class="btn-primary">🎅 Set Up Double Santa</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="reveal.js"></script>
+</body>
+</html>
+

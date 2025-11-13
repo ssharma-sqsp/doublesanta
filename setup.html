@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Double Santa - Setup</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card setup-card">
+            <div class="header">
+                <h1>🎅 Double Santa</h1>
+                <p class="subtitle">Organizer Setup</p>
+            </div>
+
+            <div id="setupForm">
+                <div class="info-box">
+                    <p><strong>⚠️ Important:</strong> This setup can only be done once! After generating, the pairings are permanent and cannot be changed.</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="participantInput">Enter Participant Names</label>
+                    <p class="help-text">Add names one at a time (minimum 4 people)</p>
+                    <div class="input-with-button">
+                        <input type="text" id="participantInput" placeholder="Enter name and press Add">
+                        <button onclick="addParticipant()" class="btn-secondary">Add</button>
+                    </div>
+                </div>
+
+                <div id="participantsList" class="participants-list">
+                    <!-- Participants will be added here -->
+                </div>
+
+                <div class="button-group">
+                    <button onclick="generatePairings()" id="generateBtn" class="btn-primary" disabled>
+                        Generate Double Santa 🎁
+                    </button>
+                </div>
+            </div>
+
+            <div id="resultsSection" style="display: none;">
+                <div class="success-box">
+                    <h2>✅ Double Santa Generated!</h2>
+                    <p>Share these secret codes with each participant. They'll use it to view their assignment.</p>
+                </div>
+
+                <div id="codesList" class="codes-list">
+                    <!-- Secret codes will be displayed here -->
+                </div>
+
+                <div class="info-box">
+                    <h3>📥 What to Download:</h3>
+                    <p style="margin: 10px 0;"><strong>1. Secret Codes (For Participants)</strong></p>
+                    <p style="margin: 0 0 15px 20px; font-size: 0.95rem;">Human-readable list of names and their secret codes. Share these privately with each participant.</p>
+                    
+                    <p style="margin: 10px 0;"><strong>2. Data File (For GitHub Pages Deployment)</strong></p>
+                    <p style="margin: 0 0 15px 20px; font-size: 0.95rem;">Encrypted data file that enables the app to work online. This is NOT readable - it's for deploying to GitHub Pages so everyone can access the site.</p>
+                </div>
+
+                <div class="button-group">
+                    <button onclick="downloadCodes()" class="btn-primary">📥 Download Codes (Human-Readable)</button>
+                    <button onclick="downloadDataFile()" class="btn-secondary">📥 Download data.json (For Deployment)</button>
+                </div>
+
+                <div class="button-group">
+                    <a href="index.html" class="btn-secondary">Test Reveal Page Locally</a>
+                </div>
+
+                <div class="warning-box">
+                    <p><strong>🚀 To Deploy to GitHub Pages:</strong></p>
+                    <ol style="margin: 10px 0 0 20px; line-height: 1.8;">
+                        <li>Save downloaded <code>data.json</code> in your project folder</li>
+                        <li>Commit and push to GitHub: <code>git add data.json && git commit -m "Add data" && git push</code></li>
+                        <li>Enable GitHub Pages in repo settings</li>
+                        <li>Share the URL and secret codes with participants!</li>
+                    </ol>
+                    <p style="margin-top: 10px;"><strong>Note:</strong> If only testing locally, you don't need data.json - the app works from your browser's storage!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="setup.js"></script>
+</body>
+</html>
+

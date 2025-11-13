@@ -1,0 +1,17 @@
+# Ignore test data files (rename to data.json when ready to deploy)
+data-test.json
+test-codes.txt
+
+# macOS
+.DS_Store
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
